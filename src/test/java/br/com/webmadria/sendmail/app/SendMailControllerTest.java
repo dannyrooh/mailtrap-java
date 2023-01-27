@@ -2,8 +2,12 @@ package br.com.webmadria.sendmail.app;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.BDDMockito;
+import org.mockito.Mockito;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
@@ -14,6 +18,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import br.com.webmadria.sendmail.domain.model.EmailModel;
+import br.com.webmadria.sendmail.domain.usecase.SendEmailUseCase;
+
 @ActiveProfiles("test")
 @WebMvcTest
 public class SendMailControllerTest {
@@ -22,6 +29,9 @@ public class SendMailControllerTest {
 
     @Autowired
     MockMvc mockMvc;
+
+    @MockBean
+    SendEmailUseCase sendEmailUseCase;
 
     @Test
     @DisplayName("Cria o envio de um email com sucesso")
@@ -34,6 +44,11 @@ public class SendMailControllerTest {
                 .to("to@teste.com")
                 .body(" body email de teste")
                 .build();
+
+        EmailModel emailModel = (new ModelMapper()).map(emailRequest, EmailModel.class);
+        emailModel.setId("15646-fdasd");
+
+        BDDMockito.given(sendEmailUseCase.execute(Mockito.any(EmailRequest.class))).willReturn(emailModel);
 
         String json = new ObjectMapper().writeValueAsString(emailRequest);
 
@@ -56,7 +71,7 @@ public class SendMailControllerTest {
 
     @Test
     @DisplayName("Erro quando os dados de envio no corpo do email estiverem inválidos")
-    public void createINvelidSendMail() {
+    public void createInvalidSendMail() {
 
     }
 }
