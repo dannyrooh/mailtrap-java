@@ -1,4 +1,4 @@
-package br.com.webmadria.sendmail.app;
+package br.com.webmadria.followup.app.entrypoint.controller;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,23 +18,24 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import br.com.webmadria.sendmail.domain.model.EmailModel;
-import br.com.webmadria.sendmail.domain.usecase.SendEmailUseCase;
+import br.com.webmadria.followup.app.entrypoint.dto.EmailRequest;
+import br.com.webmadria.followup.domain.entity.EmailEntity;
+import br.com.webmadria.followup.domain.usecase.FollowupSendUseCase;
 
 @ActiveProfiles("test")
 @WebMvcTest
-public class SendMailControllerTest {
+public class FollowupControllerTest {
 
-    static String SENDMAIL_API = "/email/sendmail";
+    static String SENDMAIL_API = "/email/send";
 
     @Autowired
     MockMvc mockMvc;
 
     @MockBean
-    SendEmailUseCase sendEmailUseCase;
+    FollowupSendUseCase followupSendUseCase;
 
     @Test
-    @DisplayName("Cria o envio de um email com sucesso")
+    @DisplayName("Envio de um email com sucesso")
     public void createSendMail() throws JsonProcessingException {
 
         EmailRequest emailRequest = EmailRequest
@@ -45,10 +46,10 @@ public class SendMailControllerTest {
                 .body(" body email de teste")
                 .build();
 
-        EmailModel emailModel = (new ModelMapper()).map(emailRequest, EmailModel.class);
-        emailModel.setId("15646-fdasd");
+        EmailEntity emailEntity = (new ModelMapper()).map(emailRequest, EmailEntity.class);
+        emailEntity.setId("15646-fdasd");
 
-        BDDMockito.given(sendEmailUseCase.execute(Mockito.any(EmailRequest.class))).willReturn(emailModel);
+        BDDMockito.given(followupSendUseCase.execute(Mockito.any(EmailEntity.class))).willReturn(emailEntity);
 
         String json = new ObjectMapper().writeValueAsString(emailRequest);
 
@@ -62,16 +63,12 @@ public class SendMailControllerTest {
             this.mockMvc
                     .perform(content)
                     .andExpect(MockMvcResultMatchers.status().isCreated())
-                    .andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty());
+                    .andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
+                    .andExpect(MockMvcResultMatchers.jsonPath("from").value(emailEntity.getFrom()));
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    @Test
-    @DisplayName("Erro quando os dados de envio no corpo do email estiverem inválidos")
-    public void createInvalidSendMail() {
-
-    }
 }

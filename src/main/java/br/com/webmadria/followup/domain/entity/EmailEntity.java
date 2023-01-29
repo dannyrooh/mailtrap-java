@@ -1,4 +1,4 @@
-package br.com.webmadria.sendmail.domain.model;
+package br.com.webmadria.followup.domain.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmailModel {
+public class EmailEntity {
     private String id;
     private String subject;
     private String from;
