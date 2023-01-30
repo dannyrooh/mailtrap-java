@@ -1,6 +1,7 @@
 package br.com.webmadria.followup.app.provider.model;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +13,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EmailModel {
-    private String id;
+
+    private UUID id;
     private String subject;
     private String from;
     private String to;

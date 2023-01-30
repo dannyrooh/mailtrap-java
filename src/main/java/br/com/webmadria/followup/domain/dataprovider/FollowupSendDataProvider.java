@@ -4,5 +4,5 @@ import br.com.webmadria.followup.domain.entity.EmailEntity;
 
 public interface FollowupSendDataProvider {
 
-    public EmailEntity execute(EmailEntity EmailEntity);
+    public EmailEntity save(EmailEntity EmailEntity);
 }
